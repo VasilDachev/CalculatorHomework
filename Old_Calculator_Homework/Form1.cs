@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace Old_Calculator_Homework
         string operation = "";
         bool CheckOperation = false;
         bool MemoryCheck = false;
+        readonly string filePath = "history.txt";
 
         private void btn_click(object sender, EventArgs e)
         {
@@ -72,6 +74,30 @@ namespace Old_Calculator_Homework
 
         private void btnEquals_Click(object sender, EventArgs e)
         {
+            using (FileStream fs = new FileStream(filePath, FileMode.Append))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    switch (operation)
+                    {
+                        case "+":
+                            sw.WriteLine(Result + "+" + Double.Parse(tbShow.Text) + "=" + (Result + Double.Parse(tbShow.Text)).ToString());
+                            break;
+                        case "-":
+                            sw.WriteLine(Result + "-" + Double.Parse(tbShow.Text) + "=" + (Result - Double.Parse(tbShow.Text)).ToString());
+                            break;
+                        case "*":
+                            sw.WriteLine(Result + "*" + Double.Parse(tbShow.Text) + "=" + (Result * Double.Parse(tbShow.Text)).ToString());
+                            break;
+                        case "/":
+                            sw.WriteLine(Result + "/" + Double.Parse(tbShow.Text) + "=" + (Result / Double.Parse(tbShow.Text)).ToString());
+                            break;
+                        case "%":
+                            sw.WriteLine(Result + "%" + Double.Parse(tbShow.Text) + "=" + (Result % Double.Parse(tbShow.Text)).ToString());
+                            break;
+                    }                  
+                }
+            }
             switch (operation)
             {
                 case "+":
@@ -85,6 +111,9 @@ namespace Old_Calculator_Homework
                     break;
                 case "/":
                     tbShow.Text = (Result / Double.Parse(tbShow.Text)).ToString();
+                    break;
+                case "%":
+                    tbShow.Text = (Result % Double.Parse(tbShow.Text)).ToString();
                     break;
                 default:
                     break;
@@ -140,5 +169,14 @@ namespace Old_Calculator_Homework
                 MemoryCheck = false;
             }
         }
+
+        private void tbShow_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            HistoryOfCalculations history = new HistoryOfCalculations();
+            history.ShowDialog();
+            
+        }
+
+       
     }
 }
